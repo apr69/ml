@@ -1,0 +1,106 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import warnings
+warnings.filterwarnings("ignore")
+
+df = pd.read_csv('Wine.csv')
+df
+
+df.shape
+df.info()
+df.describe()
+df.isnull().sum()
+
+X = df.drop(columns=['Customer_Segment']) 
+y = df['Customer_Segment']
+X
+y
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+pca_df = pd.DataFrame(data=X_pca, columns=['Principal Component 1', 'Principal Component 2'])
+pca_df['Customer_Segment'] = y
+pca_df
+
+plt.figure(figsize=(15, 6))
+colors = {1: 'blue', 2: 'red', 3: 'green'}
+
+# Scatter plot for Customer Segment 1
+plt.scatter(
+    X[y == 1]['Alcohol'],
+    X[y == 1]['Malic_Acid'],
+    color = colors[1], 
+    label = 'Customer Segment 1',
+    alpha = 0.7
+)
+
+# Scatter plot for Customer Segment 2
+plt.scatter(
+    X[y == 2]['Alcohol'],
+    X[y == 2]['Malic_Acid'],
+    color = colors[2], 
+    label = 'Customer Segment 2',
+    alpha = 0.7
+)
+
+# Scatter plot for Customer Segment 3
+plt.scatter(
+    X[y == 3]['Alcohol'],
+    X[y == 3]['Malic_Acid'],
+    color = colors[3],  
+    label = 'Customer Segment 3',
+    alpha = 0.7
+)
+
+# Set labels and title
+plt.xlabel('Alcohol')
+plt.ylabel('Malic Acid')
+plt.legend()
+plt.title('Scatter Plot (Original Data)')
+plt.show()
+
+
+plt.figure(figsize=(15, 6))
+colors = {1: 'blue', 2: 'red', 3: 'green'}
+
+# Scatter plot for Customer Segment 1
+plt.scatter(
+    pca_df[pca_df['Customer_Segment'] == 1]['Principal Component 1'],
+    pca_df[pca_df['Customer_Segment'] == 1]['Principal Component 2'],
+    color = colors[1],  # Set color for segment 1
+    label = 'Customer Segment 1',
+    alpha = 0.7
+)
+
+# Scatter plot for Customer Segment 2
+plt.scatter(
+    pca_df[pca_df['Customer_Segment'] == 2]['Principal Component 1'],
+    pca_df[pca_df['Customer_Segment'] == 2]['Principal Component 2'],
+    color = colors[2],  # Set color for segment 2
+    label = 'Customer Segment 2',
+    alpha = 0.7
+)
+
+# Scatter plot for Customer Segment 3
+plt.scatter(
+    pca_df[pca_df['Customer_Segment'] == 3]['Principal Component 1'],
+    pca_df[pca_df['Customer_Segment'] == 3]['Principal Component 2'],
+    color = colors[3],  # Set color for segment 3
+    label = 'Customer Segment 3',
+    alpha = 0.7
+)
+
+
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.legend()
+plt.title('PCA: Wine Dataset')
+plt.show()
