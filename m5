@@ -1,0 +1,48 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+
+data = pd.read_csv("car_evaluation.csv")
+data
+
+data.info()
+data.shape
+data.describe()
+data.isnull().sum()
+
+
+data = data.apply(LabelEncoder().fit_transform)
+X = data.iloc[:, :-1]  
+y = data.iloc[:, -1] 
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+# Train the classifier on the training data
+rf_classifier.fit(X_train, y_train)
+RandomForestClassifier(random_state=42)
+y_pred = rf_classifier.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy}")
+
+confusion = confusion_matrix(y_test, y_pred)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(confusion, annot=True, fmt="d", cmap="Blues",)
+plt.xlabel("Predicted Labels")
+plt.ylabel("True Labels")
+plt.title("Confusion Matrix")
+plt.show()
+
+classification_rep = classification_report(y_test, y_pred)
+print("\nClassification Report:\n", classification_rep)
+
